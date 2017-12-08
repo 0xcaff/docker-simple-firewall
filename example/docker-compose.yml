@@ -1,7 +1,7 @@
 version: '3.4'
 
-# An example of setting up a firewall service with and postponing execution in
-# other containers until the firewall is ready.
+# An example of setting up a firewall service and postponing execution in other
+# containers until the firewall is ready.
 
 services:
   # This service initializes the firewall and notifies consumers once it is up
@@ -26,17 +26,19 @@ services:
       # example of how to wait.
       FIREWALL_READY_SIGNAL_PORT: 60000
 
-  # A service to test whether the firewall is working.
+  # A service subject to the firewall to test whether the firewall is working.
   test:
     image: alpine:3.7
     volumes:
       - ./scripts/:/scripts/
 
+    # This service shares the network stack of the firewall container to be
+    # protected by the firewall. This also means the ready signal port is
+    # available on localhost.
     network_mode: 'service:firewall'
 
     # The [wait-for script][wait-for] waits until a TCP socket is open then runs
-    # a specified command. This service shares the network stack of the firewall
-    # container so the ready signal port is available on localhost.
+    # a specified command.
     #
     # [wait-for]: https://github.com/Eficode/wait-for
     command: "/scripts/wait-for localhost:60000 -- ./scripts/test.sh"

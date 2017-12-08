@@ -24,6 +24,7 @@ container's network stack.
 
     docker run \
       --network="container:firewall" \
+      -it \
       alpine:3.7
 
 Checkout the [`example/`][example] folder to see an example of this with

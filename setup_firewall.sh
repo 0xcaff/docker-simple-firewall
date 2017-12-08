@@ -39,7 +39,7 @@ iptables \
   --out-interface tun0 \
   --jump ACCEPT
 
-# Accept traffic to vpn server.
+# Accept traffic to the one allowed destination.
 iptables \
   --append OUTPUT \
   --destination "${ALLOW_IP_ADDRESS}" \
