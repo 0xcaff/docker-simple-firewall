@@ -1,0 +1,42 @@
+version: '3.4'
+
+# An example of setting up a firewall service with and postponing execution in
+# other containers until the firewall is ready.
+
+services:
+  # This service initializes the firewall and notifies consumers once it is up
+  # by listening on a TCP port.
+  firewall:
+    image: 0xcaff/simple-firewall:latest
+
+    # This capibility is needed to add firewall rules.
+    cap_add:
+      - net_admin
+
+    # Some environment variables to configure the firewall. See the Dockerfile
+    # for more about these options.
+    environment:
+      ALLOW_IP_ADDRESS: 52.218.200.155
+      ALLOW_PORT: 80
+      ALLOW_PROTO: tcp
+
+      # This is the port which a tcp socket will be opened on once the firewall
+      # is ready. Containers which require the firewall to be available before
+      # doing something should wait until this port is open. See below for an
+      # example of how to wait.
+      FIREWALL_READY_SIGNAL_PORT: 60000
+
+  # A service to test whether the firewall is working.
+  test:
+    image: alpine:3.7
+    volumes:
+      - ./scripts/:/scripts/
+
+    network_mode: 'service:firewall'
+
+    # The [wait-for script][wait-for] waits until a TCP socket is open then runs
+    # a specified command. This service shares the network stack of the firewall
+    # container so the ready signal port is available on localhost.
+    #
+    # [wait-for]: https://github.com/Eficode/wait-for
+    command: "/scripts/wait-for localhost:60000 -- ./scripts/test.sh"
