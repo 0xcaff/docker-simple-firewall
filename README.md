@@ -1,5 +1,5 @@
-docker-simple-outbound-firewall
-===============================
+docker-simple-firewall
+======================
 
 A container which sets up a simple iptables firewall only allowing outbound
 traffic to the docker local network and a single ip, port and protocol
