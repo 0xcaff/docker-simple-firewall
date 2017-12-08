@@ -9,8 +9,6 @@ set -e
 
 echo "Initializing Firewall"
 
-sleep 1
-
 # Clear output table.
 iptables --flush OUTPUT
 
